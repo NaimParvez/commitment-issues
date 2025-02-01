@@ -1,0 +1,27 @@
+# Ignore the .env file containing API keys
+.env
+
+# Ignore Python compiled files
+__pycache__/
+*.py[cod]
+
+# Ignore Streamlit cache and logs
+.streamlit/
+logs/
+
+# Ignore system files (Mac/Linux/Windows)
+.DS_Store
+Thumbs.db
+
+# Ignore virtual environments
+venv/
+.env/
+*.venv/
+Pipfile
+Pipfile.lock
+
+# Ignore Jupyter Notebook checkpoints (if used)
+.ipynb_checkpoints/
+
+# Ignore VSCode settings (if using VSCode)
+.vscode/
