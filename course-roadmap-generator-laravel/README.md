@@ -70,7 +70,6 @@ In order to ensure that the Laravel community is welcoming to all, please review
 If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
 ## License
-
 ---
 
 This README covers all aspects of the project—from features and installation to API integration and troubleshooting. Adjust any sections as needed to fit any further customizations or project updates.
