@@ -57,8 +57,8 @@ Follow these steps to set up the project on your local machine:
 1. **Clone the Repository:**
 
    ```bash
-   git clone https://github.com/yourusername/course-roadmap-generator.git
-   cd course-roadmap-generator
+   git clone https://github.com/NaimParvez/course-roadmap-generator-laravel.git
+   cd course-roadmap-generator-laravel
    ```
 
 2. **Install PHP Dependencies:**
