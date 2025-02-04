@@ -2,4 +2,8 @@ streamlit
 google-generativeai
 pandas
 numpy
+<<<<<<< HEAD
 python-dotenv
+=======
+python-dotenv
+>>>>>>> 41e3cb6f7a4e4e821c1f45150dcec4d357de3425

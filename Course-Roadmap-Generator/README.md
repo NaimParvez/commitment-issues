@@ -5,13 +5,13 @@ This project is a Streamlit web application that generates a course roadmap base
 ## Project Structure
 
 ```
-streamlit-app
+Course-Roadmap-Generator
 ├── src
 │   ├── app.py          # Main entry point of the Streamlit application
 │   └── types
 │       └── index.py    # Custom types and data structures
 ├── requirements.txt     # Project dependencies
-└── README.md            # Project documentation
+└── README.md       # Project documentation
 ```
 
 ## Setup Instructions
@@ -19,7 +19,6 @@ streamlit-app
 1. **Clone the repository:**
    ```
    git clone <repository-url>
-   cd streamlit-app
    ```
 
 2. **Install dependencies:**
@@ -31,7 +30,7 @@ streamlit-app
 3. **Run the application:**
    Execute the following command to start the Streamlit app:
    ```
-   streamlit run src/app.py
+   streamlit run app.py
    ```
 
 ## Usage Guidelines
