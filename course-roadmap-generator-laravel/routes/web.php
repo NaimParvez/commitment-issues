@@ -20,6 +20,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/roadmap/create', [RoadmapController::class, 'create'])->name('roadmap.create');
     Route::post('/roadmap', [RoadmapController::class, 'store'])->name('roadmap.store');
     Route::get('/roadmap/{roadmap}', [RoadmapController::class, 'show'])->name('roadmap.show');
+    Route::delete('/roadmap/{roadmap}', [App\Http\Controllers\RoadmapController::class, 'destroy'])->name('roadmap.destroy');
 });
 
 require __DIR__.'/auth.php';
