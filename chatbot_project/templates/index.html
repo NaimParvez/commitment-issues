@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdIth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-robot"></i>
+                <span>EdIth</span>
+            </div>
+            <div class="theme-toggle">
+                <button id="theme-switch" title="Toggle dark/light mode">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="chat-main">
+            <div class="chat-header">
+                <div class="header-info">
+                    <div class="status-indicator online"></div>
+                    <h2>AI Assistant</h2>
+                </div>
+                <div class="header-actions">
+                    <button id="clear-chat" title="Clear conversation">
+                        <i class="fa-solid fa-broom"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div id="chatbox" class="chatbox">
+                <div class="message bot-message welcome-message">
+                    <div class="message-content">
+                        <span class="message-text">Hi there! I'm your AI assistant. How can I help you today?</span>
+                        <span class="message-time">Just now</span>
+                    </div>
+                </div>
+                <!-- Messages will be added here dynamically -->
+            </div>
+            
+            <div class="input-container">
+                <button class="feature-btn" title="Upload file">
+                    <i class="fa-solid fa-paperclip"></i>
+                </button>
+                <div class="input-wrapper">
+                    <input type="text" id="input" placeholder="Type your message..." autocomplete="off">
+                    <button class="emoji-btn" title="Add emoji">
+                        <i class="fa-regular fa-face-smile"></i>
+                    </button>
+                </div>
+                <button id="send-btn" class="send-btn" onclick="sendMessage()">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const chatbox = document.getElementById("chatbox");
+        const input = document.getElementById("input");
+        const themeSwitch = document.getElementById("theme-switch");
+        const clearChat = document.getElementById("clear-chat");
+        
+        // Theme toggle
+        themeSwitch.addEventListener("click", function() {
+            document.body.classList.toggle("dark-theme");
+            const icon = themeSwitch.querySelector("i");
+            if (document.body.classList.contains("dark-theme")) {
+                icon.classList.remove("fa-moon");
+                icon.classList.add("fa-sun");
+            } else {
+                icon.classList.remove("fa-sun");
+                icon.classList.add("fa-moon");
+            }
+        });
+        
+        // Clear chat functionality
+        clearChat.addEventListener("click", function() {
+            if (confirm("Are you sure you want to clear the conversation?")) {
+                const welcomeMessage = chatbox.querySelector(".welcome-message");
+                chatbox.innerHTML = "";
+                if (welcomeMessage) chatbox.appendChild(welcomeMessage);
+            }
+        });
+        
+        // Format message text with markdown-like syntax
+        function formatResponse(text) {
+            return text
+                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/`(.*?)`/g, '<code>$1</code>');
+        }
+        
+        // Get current time for message timestamp
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        function sendMessage() {
+            const message = input.value.trim();
+            if (!message) return;
+            
+            const time = getCurrentTime();
+            
+            chatbox.innerHTML += `
+                <div class="message user-message">
+                    <div class="message-content">
+                        <span class="message-text">${message}</span>
+                        <span class="message-time">${time}</span>
+                    </div>
+                </div>`;
+            
+            // Show typing indicator
+            chatbox.innerHTML += `
+                <div class="message bot-message typing-indicator">
+                    <div class="dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>`;
+            
+            chatbox.scrollTop = chatbox.scrollHeight;
+            
+            fetch("/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ message: message })
+            })
+            .then(response => {
+                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                return response.json();
+            })
+            .then(data => {
+                // Remove typing indicator
+                const typingIndicator = document.querySelector(".typing-indicator");
+                if (typingIndicator) typingIndicator.remove();
+                
+                // Use the formatted response from server without further processing
+                const botResponse = data.response || "No response received";
+                
+                chatbox.innerHTML += `
+                    <div class="message bot-message">
+                        <div class="message-content">
+                            <span class="message-text">${botResponse}</span>
+                            <span class="message-time">${getCurrentTime()}</span>
+                        </div>
+                    </div>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+            })
+            .catch(error => {
+                // Remove typing indicator
+                const typingIndicator = document.querySelector(".typing-indicator");
+                if (typingIndicator) typingIndicator.remove();
+                
+                console.error("Fetch error:", error);
+                chatbox.innerHTML += `
+                    <div class="message bot-message error">
+                        <div class="message-content">
+                            <span class="message-text">Error: ${error.message}</span>
+                            <span class="message-time">${getCurrentTime()}</span>
+                        </div>
+                    </div>`;
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+            
+            input.value = "";
+        }
+        
+        input.addEventListener("keypress", function(event) {
+            if (event.key === "Enter") sendMessage();
+        });
+        
+        // Auto-resize input field as user types
+        input.addEventListener("input", function() {
+            this.style.height = "auto";
+            this.style.height = (this.scrollHeight) + "px";
+        });
+    </script>
+</body>
+</html>
